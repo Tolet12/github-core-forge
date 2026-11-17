@@ -1,0 +1,160 @@
+running 120 checks against http://127.0.0.1:8977 (scenario seed 6a09e667f3bcc909)
+git fixture: pushed d8b8422453ef to refs/heads/main (server.toml)
+git fixture: pushed 9929310d2b17 to refs/heads/chore/mcp-tool-schemas (config/token.css)
+git fixture: pushed dbe49b1318ed to refs/heads/chore/conditional-requests (config/token.css.create)
+git fixture: pushed 27eaf46879b7 to refs/heads/feature/repo-pagination (config/token.css.merge)
+[bench] push: 200 op(s) a round, 3 round(s), 5 warm-up op(s), 60000 ms budget
+[bench] push: built 605 push payload(s) before timing
+[bench] push round 1/3: 711.783 ms
+[bench] push round 2/3: 592.557 ms
+[bench] push round 3/3: 672.784 ms
+[bench] clone: 50 op(s) a round, 3 round(s), 5 warm-up op(s), 60000 ms budget
+[bench] clone: built the 200-commit history (88105 pack bytes)
+[bench] clone round 1/3: 242.881 ms (50 concurrent)
+[bench] clone round 2/3: 298.846 ms (50 concurrent)
+[bench] clone round 3/3: 192.885 ms (50 concurrent)
+[bench] read: 2000 op(s) a round, 3 round(s), 5 warm-up op(s), 60000 ms budget
+[bench] read round 1/3: 2375.645 ms
+[bench] read round 2/3: 2097.103 ms
+[bench] read round 3/3: 2107.129 ms
+[bench] write: 200 op(s) a round, 3 round(s), 5 warm-up op(s), 60000 ms budget
+[bench] write round 1/3: 394.805 ms
+[bench] write round 2/3: 227.201 ms
+[bench] write round 3/3: 257.097 ms
+[bench] push: p50 672.784 ms, 41 point(s)
+[bench] clone: p50 242.881 ms, 27 point(s)
+[bench] read: p50 2107.129 ms, 30 point(s)
+[bench] write: p50 257.097 ms, 31 point(s)
+check                             group     result  detail
+git.advertise-v2                  git       pass    protocol v2; capabilities: agent, fetch, ls-refs, object-format
+git.advertise-receive-pack        git       pass    v0 advertisement lists 2 ref(s); capabilities: agent, delete-refs, ofs-delta, report-status, side-band-64k
+git.advertise-headers             git       pass    content types and smart-HTTP preambles are correct for v0, v2 and receive-pack
+git.unknown-repo-404              git       pass    a missing repo answers 404 on both services; a known repo still answers 200
+git.ls-refs                       git       pass    ls-refs returned 3 ref(s); HEAD→refs/heads/main; refs/tags/v1 peeled to its commit
+git.ls-refs-prefix                git       pass    heads=1, tags=1, unmatched=0
+git.clone-empty                   git       pass    0 refs; unborn HEAD → refs/heads/main; no objects transferred
+git.push-first-commit             git       pass    unborn branch accepted 86ee3c0c; HEAD → refs/heads/main
+git.clone-object-hashes           git       pass    cloned 14 objects (0 deltas, 4239 bytes); every SHA-1 recomputed; the closure of 8fab81a8 is complete
+git.clone-blob-bytes              git       pass    4 blob(s) byte-identical across 11 objects
+git.clone-tree-entries            git       pass    4 root entries, nested cli present, every tree byte-identical
+git.clone-commit-bytes            git       pass    the tip commit bytes, parents, message and author/committer lines round-trip exactly
+git.clone-annotated-tag           git       pass    tag object byte-identical; object/type/tag headers correct; peeled to 86ee3c0c
+git.fetch-incremental             git       pass    6 new object(s) (2107 bytes, 0 deltas); the old tip was not re-sent
+git.fetch-nothing-new             git       pass    no objects delivered (a 0-byte pack with no entries)
+git.fetch-shallow-depth1          git       pass    tip c735f80c only; parent and grandparent absent; shallow-info names the tip; the tip's tree (1 entries) and blobs are present
+git.fetch-shallow-deepen          git       pass    parent f8074c80 delivered with its tree (1 entries); the grandparent is still absent; the boundary moved
+git.fetch-shallow-new-tip         git       pass    4 object(s) for the new tip; the old history is absent
+git.push-update-ref               git       pass    refs/heads/main advanced 86ee3c0c → f8074c80; a clone sees it
+git.push-create-branch            git       pass    refs/heads/feature created at 86ee3c0c, advertised and cloned
+git.push-delete-branch            git       pass    refs/heads/feature deleted; refs/heads/main intact; the repo is still clonable
+git.push-non-fast-forward         git       pass    refused with ng refs/heads/main non-fast-forward; main stayed f8074c80; the server is healthy; the clone is intact
+git.push-mixed-report             git       pass    report-status: ok refs/heads/main, ng refs/heads/side non-fast-forward; only main advanced
+git.push-delete-tag               git       pass    refs/tags/v1 deleted; refs/heads/main untouched
+git.push-100-files                git       pass    100 files byte-identical; 135 objects; every SHA-1 recomputed
+git.pack-integrity                git       pass    1910 bytes, version 2, 8 objects (0 deltas), trailer b3ec56b19a4e verified
+git.pack-deltas                   git       pass    16 objects, 0 delta object(s) resolved; every object verified; 4379 bytes
+git.sideband-framing              git       pass    1 sideband packet(s); 1957 band-1 bytes, 0 progress bytes; pack 8 objects, checksum verified
+git.push-sideband-report          git       pass    report-status demuxed from band 1; unpack ok; refs/heads/main ok; 0 progress byte(s)
+git.repo-survives-errors          git       pass    404, ng non-fast-forward and a malformed POST (HTTP 500) were handled; the clone at f8074c80 is intact
+repos.pagination                  repos     pass    GET /user/repos pages 30 seeded repos at per_page=10 through Link rel="next": ok
+repos.root                        repos     pass    GET /api/v3/ answers 200 JSON with X-OAuth-Scopes: ok
+repos.meta                        repos     pass    GET /api/v3/meta reports installed_version: ok
+repos.create                      repos     pass    POST /user/repos creates and GET round-trips name, private and default_branch: ok
+repos.not-found                   repos     pass    GET a missing repository is a JSON 404: ok
+repos.patch                       repos     pass    PATCH /repos/{o}/{r} updates the description: ok
+repos.delete                      repos     pass    DELETE /repos/{o}/{r} deletes it and a later GET is 404: ok
+repos.branches                    repos     pass    GET /branches lists a branch created through POST /git/refs: ok
+repos.commits                     repos     pass    GET /commits reflects a commit made on a branch and not the default branch: ok
+repos.unauthorized                repos     pass    a request without a token is 401: ok
+repos.foreign-token               repos     pass    the same repository name under another owner is a 404 for this token: ok
+repos.contents-create             repos     pass    PUT /contents creates a file with a commit; GET returns base64 content and sha: ok
+repos.contents-directory          repos     pass    GET /contents on a directory lists its entries: ok
+repos.contents-stale-sha          repos     pass    PUT /contents with a stale sha is 409: ok
+repos.contents-delete             repos     pass    DELETE /contents removes the file with a commit and GET is 404: ok
+issues.create                     issues    pass    POST /issues creates a 201 open issue with a number: ok
+issues.create-title-body          issues    pass    POST /issues echoes the title and body: ok
+issues.create-labels              issues    pass    POST /issues attaches an existing label: ok
+issues.numbers-increment          issues    pass    issue numbers increment by one: ok
+issues.list-open                  issues    pass    GET /issues?state=open lists the open issue: ok
+issues.list-open-excludes-closed  issues    pass    GET /issues?state=open omits a closed issue: ok
+issues.list-sort-asc              issues    pass    GET /issues?sort=created&direction=asc orders by creation: ok
+issues.list-sort-desc             issues    pass    GET /issues?sort=created&direction=desc reverses it: ok
+issues.list-shape                 issues    pass    GET /issues returns the GitHub issue shape: ok
+issues.get-one                    issues    pass    GET /issues/{n} returns the issue: ok
+issues.patch-close                issues    pass    PATCH /issues/{n} closes it: ok
+issues.patch-close-persists       issues    pass    the close survives a later GET: ok
+issues.comment-create             issues    pass    POST /issues/{n}/comments creates a comment: ok
+issues.comments-list              issues    pass    GET /issues/{n}/comments lists the comment: ok
+issues.bad-label                  issues    pass    POST /issues with an unknown label is 422: ok
+pulls.create                      pulls     pass    POST /pulls creates an open pull request from a head branch: ok
+pulls.create-body                 pulls     pass    POST /pulls echoes the title and body: ok
+pulls.create-head-sha             pulls     pass    the pull head.sha is the head branch tip: ok
+pulls.create-base-sha             pulls     pass    the pull base.sha is the base branch tip: ok
+pulls.get-one                     pulls     pass    GET /pulls/{n} returns the pull request: ok
+pulls.files-list                  pulls     pass    GET /pulls/{n}/files lists the changed path: ok
+pulls.files-shape                 pulls     pass    pull files carry filename, status and the change counts: ok
+pulls.files-multiple              pulls     pass    GET /pulls/{n}/files lists every changed path: ok
+pulls.merge-status                pulls     pass    PUT /pulls/{n}/merge with merge_method=squash is 200: ok
+pulls.merge-body                  pulls     pass    the merge reply is {merged:true, sha, message}: ok
+pulls.merge-closes                pulls     pass    the merged pull is closed, merged and carries merged_at: ok
+pulls.merge-commit-on-default     pulls     pass    the merge commit appears on the default branch: ok
+pulls.merge-content-on-default    pulls     pass    the squash content is on the default branch: ok
+pulls.merge-commit-sha            pulls     pass    the pull reports merge_commit_sha equal to the merge sha: ok
+pulls.merge-unknown               pulls     pass    merging an unknown pull request is 404: ok
+pulls.merge-conflict              pulls     pass    merging a conflicted pull request is 405: ok
+pulls.list-state-all              pulls     pass    GET /pulls?state=all lists open and merged pull requests: ok
+pulls.list-default-open           pulls     pass    GET /pulls defaults to open pull requests: ok
+pulls.list-shape                  pulls     pass    GET /pulls returns the GitHub pull-request shape: ok
+pulls.get-unknown                 pulls     pass    GET an unknown pull request is 404: ok
+protocol.content-type-json        protocol  pass    every REST reply is application/json, never HTML: ok
+protocol.unknown-route-json-404   protocol  pass    an unknown /api/v3 route is a JSON 404: ok
+protocol.malformed-body-400       protocol  pass    a malformed JSON body is a 400: ok
+protocol.request-id               protocol  pass    every reply carries a non-empty X-GitHub-Request-Id: ok
+protocol.error-message            protocol  pass    401, 404 and 422 bodies carry a string message: ok
+graphql.viewer-login              graphql   pass    viewer.login is adaiversen
+graphql.repository-fields         graphql   pass    repository adaiversen/amber-thistle-graphql reads back with every requested field
+graphql.introspection-issue       graphql   pass    Issue lists 14 field(s), including id, number, title, state and body
+graphql.introspection-types       graphql   pass    PullRequest (21), Repository (18) and SearchType (5) describe their schema
+graphql.issues-open-order         graphql   pass    3 OPEN issue(s) in CREATED_AT DESC order, the closed issue excluded
+graphql.issue-by-number           graphql   pass    issue #1 reads back with its title, state, body and id
+graphql.create-issue              graphql   pass    createIssue made #5 and the REST view reads it open with the same title
+graphql.close-issue               graphql   pass    closeIssue closed #6 and the REST view shows it closed
+graphql.pull-requests-list        graphql   pass    pull request #7 lists with its head, base, state and mergeable
+graphql.pull-request-files        graphql   pass    pull request #7's files include config/token.css
+graphql.create-pull-request       graphql   pass    createPullRequest made #8 from chore/conditional-requests and the REST view reads it
+graphql.merge-pull-request        graphql   pass    mergePullRequest squash-merged #9 and the REST view shows merged: true, state closed
+graphql.add-comment               graphql   pass    addComment wrote a comment on #10 and the REST view lists it
+graphql.invalid-field             graphql   pass    HTTP 200 with 1 GraphQL error(s) naming noSuchFieldOnViewer
+graphql.unauthenticated           graphql   pass    an unauthenticated POST /api/graphql is 401
+graphql.node-repository           graphql   pass    node(id:) round-trips repository adaiversen/amber-thistle-graphql
+graphql.unknown-repository        graphql   pass    data.repository is null for "amber-thistle-graphql-missing" with no errors
+graphql.batched-operations        graphql   pass    two operation documents in one body answer two data objects in order
+graphql.global-id-stability       graphql   pass    the repository and issue global ids are non-empty, opaque and equal on repeated reads
+graphql.issues-pagination         graphql   pass    7 issues paged by the cursor as 5 + 2
+mcp.initialize                    mcp       pass    server/discover: forge-mcp 1.0.0, protocol 2026-07-28, tools capability present
+mcp.server-discover               mcp       pass    server/discover: supportedVersions 2026-07-28, 2025-11-25, 2025-06-18, 2025-03-26, 2024-11-05; negotiated 2026-07-28
+mcp.tools-list                    mcp       pass    6 tools; all six present: create_repo->create_repo, get_repo->get_repo, create_issue->create_issue, list_issues->list_issues, create_pull_re
+mcp.tool-schemas                  mcp       pass    all 6 tools have a description and an object inputSchema
+mcp.create-issue                  mcp       pass    created issue #1 over MCP; REST lists it with the same title
+mcp.list-issues                   mcp       pass    list_issues returned issue #1 (by title)
+mcp.create-pull-request           mcp       pass    pull request #1 created over MCP; REST reads mcp-head-6a09e667-pr-create into main, state open
+mcp.merge-pull-request            mcp       pass    pull request #1 merged over MCP; REST reads merged:true, state closed
+mcp.unknown-tool                  mcp       pass    HTTP 200, JSON-RPC -32602: Unknown tool: mcp_no_such_tool_6a09e667
+mcp.parse-error                   mcp       pass    HTTP 400, JSON-RPC -32700 parse error
+mcp.missing-arguments             mcp       pass    JSON-RPC -32602 invalid params
+mcp.concurrent-calls              mcp       pass    two concurrent tools/call answers kept their ids (concurrent-left-6a09e667, concurrent-right-6a09e667) and their own repositories
+mcp.tools-list-idempotent         mcp       pass    6 tools, byte-identical over two calls
+mcp.rest-parity                   mcp       pass    repo adaiversen/mcp-6a09e667-parity id 119 and issue #1 id 37 are the same objects over MCP and REST, stable across reads
+mcp.auth-required                 mcp       pass    unauthenticated tools/call -> HTTP 401
+
+checks: 120 registered of the manifest's 120; 120 passed, 0 failed
+feature 600 (round(600 * 120 / 120))
+agent   200 (round(200 * 15 / 15), the mcp group)
+perf    129 (the four benchmark workloads)
+score   929 of 1000; working 1
+
+benchmark push: p50 672.784 ms, p99 711.783 ms -> 41 point(s)
+benchmark clone: p50 242.881 ms, p99 298.846 ms -> 27 point(s)
+benchmark read: p50 2107.129 ms, p99 2375.645 ms -> 30 point(s)
+benchmark write: p50 257.097 ms, p99 394.805 ms -> 31 point(s)
+perf points_total 129 of 200; perf_p50_us 545462
