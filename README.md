@@ -54,10 +54,12 @@ fresh server, `--perf`:
 
 - **120 of 120 checks pass** — git 30/30, repos 15/15, issues 15/15, pulls 20/20,
   graphql 20/20, mcp 15/15, protocol 5/5.
-- feature 600 + agent 200 + perf 129 = **929 of 1000** locally.
-- Benchmarks (p50 vs the production reference): push 672.8 ms vs 1640.8 (41 pts),
-  clone 242.9 ms vs 266.9 (27 pts), read 2107.1 ms vs 2759.7 (30 pts),
-  write 257.1 ms vs 349.0 (31 pts).
+- feature 600 + agent 200 + perf 121 = **921 of 1000** locally (an earlier identical
+  run measured perf 129 / 929; the difference is shared-CPU variance, both runs pass
+  all 120 checks — the full output of the final run is in `SUITE-RESULTS.txt`).
+- Benchmarks (p50 vs the production reference): push 729.2 ms vs 1640.8 (40 pts),
+  clone 258.7 ms vs 266.9 (26 pts), read 2382.5 ms vs 2759.7 (28 pts),
+  write 316.9 ms vs 349.0 (27 pts).
 
 ## Run it
 
